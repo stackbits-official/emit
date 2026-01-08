@@ -1,0 +1,11 @@
+CompileFlags:
+  Add:
+    - -std=c++23
+    - -Wall
+    - -Werror
+    - -Wextra
+    - -Iinclude
+    - -DEMIT_VERSION_MAJOR=-1
+    - -DEMIT_VERSION_MINOR=-1
+    - -DEMIT_VERSION_PATCH=-1
+    - -DEMIT_SUPPORTED

@@ -1,0 +1,7 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/emitTargets.cmake")
+
+if(CMAKE_CXX_STANDARD GREATER_EQUAL 23)
+    add_compile_definitions(EMIT_SUPPORTED)
+endif()
