@@ -15,10 +15,10 @@ namespace emit {
         pipeline() = default;
         ~pipeline() = default;
 
-        pipeline(const pipeline&) = default;
+        pipeline(const pipeline&) = delete;
         pipeline(pipeline&&) noexcept = default;
 
-        pipeline& operator=(const pipeline&) = default;
+        pipeline& operator=(const pipeline&) = delete;
         pipeline& operator=(pipeline&&) noexcept = default;
 
         template <typename U, auto Fn>
@@ -80,7 +80,7 @@ namespace emit {
 
         void remove(const connection& target) {
             for (std::size_t i = connections_.size(); i-- > 0;) {
-                const connection& candidate = connections_[i];
+                connection& candidate = connections_[i];
 
                 if (candidate == target) {
                     std::swap(candidate, connections_.back());

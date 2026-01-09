@@ -17,7 +17,7 @@ namespace emit {
         dispatcher(dispatcher&&) noexcept = default;
 
         dispatcher& operator=(const dispatcher&) = delete;
-        dispatcher& operator=(dispatcher&&) noexcept = delete;
+        dispatcher& operator=(dispatcher&&) noexcept = default;
 
         template <typename T>
         [[nodiscard]] pipeline<T>& acquire() {
