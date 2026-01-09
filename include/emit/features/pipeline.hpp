@@ -21,9 +21,9 @@ namespace emit {
         pipeline& operator=(const pipeline&) = delete;
         pipeline& operator=(pipeline&&) noexcept = default;
 
-        template <typename U, auto Fn>
+        template <auto Fn, typename U>
         void connect(U& instance) {
-            connections_.push_back(connection::template create<U, Fn>(instance));
+            connections_.push_back(connection::template create<Fn, U>(instance));
         }
 
         template <auto Fn>
@@ -31,9 +31,9 @@ namespace emit {
             connections_.push_back(connection::template create<Fn>());
         }
 
-        template <typename U, auto Fn>
+        template <auto Fn, typename U>
         void disconnect(U& instance) {
-            connection target = connection::template create<U, Fn>(instance);
+            connection target = connection::template create<Fn, U>(instance);
 
             remove(target);
         }

@@ -15,12 +15,12 @@ namespace emit::detail {
         connection& operator=(const connection&) = default;
         connection& operator=(connection&&) noexcept = default;
 
-        template <typename U, auto Fn>
+        template <auto Fn, typename U>
         [[nodiscard]] static connection create(U& instance) {
             connection connection;
 
             connection.instance_ = &instance;
-            connection.function_ = member_invoke<U, Fn>;
+            connection.function_ = member_invoke<Fn, U>;
 
             return connection;
         }
@@ -44,7 +44,7 @@ namespace emit::detail {
         }
 
         void operator()(const T& event) const {
-            function_(event);
+            function_(instance_, event);
         }
 
         [[nodiscard]] explicit operator bool() const {
@@ -53,15 +53,15 @@ namespace emit::detail {
 
     private:
         void* instance_ = nullptr;
-        void (*function_)(const T&) = nullptr;
+        void (*function_)(void*, const T&) = nullptr;
 
-        template <typename U, auto Fn>
-        static void member_invoke(U* instance, const T& event) {
-            (instance.*Fn)(event);
+        template <auto Fn, typename U>
+        static void member_invoke(void* instance, const T& event) {
+            (reinterpret_cast<U*>(instance)->*Fn)(event);
         }
 
         template <auto Fn>
-        static void free_invoke(const T& event) {
+        static void free_invoke(void*, const T& event) {
             Fn(event);
         }
     };
