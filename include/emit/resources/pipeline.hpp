@@ -2,14 +2,14 @@
 
 #ifdef EMIT_SUPPORTED
 
-#include "../detail/connection.hpp"
+#include "../resources/delegate.hpp"
 
 #include <vector>
 
 namespace emit {
     template <typename T>
     class pipeline {
-        using connection = detail::connection<T>;
+        using delegate = delegate<void(const T&)>;
 
     public:
         pipeline() = default;
@@ -23,24 +23,32 @@ namespace emit {
 
         template <auto Fn, typename U>
         void connect(U& instance) {
-            connections_.push_back(connection::template create<Fn, U>(instance));
+            delegate& delegate = delegates_.emplace_back();
+
+            delegate.template connect<Fn, U>(instance);
         }
 
         template <auto Fn>
         void connect() {
-            connections_.push_back(connection::template create<Fn>());
+            delegate& delegate = delegates_.emplace_back();
+
+            delegate.template connect<Fn>();
         }
 
         template <auto Fn, typename U>
         void disconnect(U& instance) {
-            connection target = connection::template create<Fn, U>(instance);
+            delegate target;
+
+            target.template connect<Fn, U>(instance);
 
             remove(target);
         }
 
         template <auto Fn>
         void disconnect() {
-            connection target = connection::template create<Fn>();
+            delegate target;
+
+            target.template connect<Fn>();
 
             remove(target);
         }
@@ -54,15 +62,15 @@ namespace emit {
         void trigger(Args&&... args) {
             T event = T(std::forward<Args>(args)...);
 
-            for (const connection& connection : connections_) {
-                connection(event);
+            for (const delegate& delegate : delegates_) {
+                delegate(event);
             }
         }
 
         void dispatch() {
             for (const T& event : queue_) {
-                for (const connection& connection : connections_) {
-                    connection(event);
+                for (const delegate& delegate : delegates_) {
+                    delegate(event);
                 }
             }
 
@@ -70,21 +78,21 @@ namespace emit {
         }
 
         void clear() {
-            connections_.clear();
+            delegates_.clear();
             queue_.clear();
         }
 
     private:
         std::vector<T> queue_;
-        std::vector<connection> connections_;
+        std::vector<delegate> delegates_;
 
-        void remove(const connection& target) {
-            for (std::size_t i = connections_.size(); i-- > 0;) {
-                connection& candidate = connections_[i];
+        void remove(const delegate& target) {
+            for (std::size_t i = delegates_.size(); i-- > 0;) {
+                delegate& candidate = delegates_[i];
 
                 if (candidate == target) {
-                    std::swap(candidate, connections_.back());
-                    connections_.pop_back();
+                    std::swap(candidate, delegates_.back());
+                    delegates_.pop_back();
                 }
             }
         }

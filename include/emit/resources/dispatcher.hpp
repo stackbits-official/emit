@@ -2,12 +2,12 @@
 
 #ifdef EMIT_SUPPORTED
 
-#include "../detail/pipeline_delegate.hpp"
-#include "../detail/type_index.hpp"
+#include "../utility/generic_pipeline.hpp"
+#include "../utility/type_index.hpp"
 
 namespace emit {
     class dispatcher {
-        using pipeline_delegate = detail::pipeline_delegate;
+        using generic_pipeline = detail::generic_pipeline;
 
     public:
         dispatcher() = default;
@@ -27,17 +27,17 @@ namespace emit {
                 delegates_.resize(index + 1);
             }
 
-            pipeline_delegate& delegate = delegates_[index];
+            generic_pipeline& delegate = delegates_[index];
 
             if (!delegate) {
-                delegate = pipeline_delegate::create<T>();
+                delegate = generic_pipeline::create<T>();
             }
 
             return delegate.acquire<T>();
         }
 
         void clear() {
-            for (pipeline_delegate& delegate : delegates_) {
+            for (generic_pipeline& delegate : delegates_) {
                 if (delegate) {
                     delegate.clear();
                 }
@@ -45,7 +45,7 @@ namespace emit {
         }
 
         void dispatch() {
-            for (pipeline_delegate& delegate : delegates_) {
+            for (generic_pipeline& delegate : delegates_) {
                 if (delegate) {
                     delegate.dispatch();
                 }
@@ -53,7 +53,7 @@ namespace emit {
         }
 
     private:
-        std::vector<pipeline_delegate> delegates_;
+        std::vector<generic_pipeline> delegates_;
     };
 }
 

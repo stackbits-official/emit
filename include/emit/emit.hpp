@@ -2,7 +2,8 @@
 
 #ifdef EMIT_SUPPORTED
 
-#include "features/dispatcher.hpp"
-#include "features/pipeline.hpp"
+#include "resources/delegate.hpp"
+#include "resources/dispatcher.hpp"
+#include "resources/pipeline.hpp"
 
 #endif

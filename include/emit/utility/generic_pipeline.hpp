@@ -2,20 +2,20 @@
 
 #ifdef EMIT_SUPPORTED
 
-#include "../features/pipeline.hpp"
+#include "../resources/pipeline.hpp"
 
 #include "memory.hpp"
 
 #include <new>
 
 namespace emit::detail {
-    class pipeline_delegate {
+    class generic_pipeline {
         using false_pipeline = pipeline<void*>;
 
     public:
-        pipeline_delegate() = default;
+        generic_pipeline() = default;
 
-        ~pipeline_delegate() {
+        ~generic_pipeline() {
             if (destructor_ != nullptr) {
                 destructor_(&memory_);
 
@@ -26,9 +26,9 @@ namespace emit::detail {
             }
         }
 
-        pipeline_delegate(const pipeline_delegate&) = delete;
+        generic_pipeline(const generic_pipeline&) = delete;
 
-        pipeline_delegate(pipeline_delegate&& other) noexcept {
+        generic_pipeline(generic_pipeline&& other) noexcept {
             if (other) {
                 other.move_(&memory_, &other.memory_);
 
@@ -44,9 +44,9 @@ namespace emit::detail {
             }
         }
 
-        pipeline_delegate& operator=(const pipeline_delegate&) = delete;
+        generic_pipeline& operator=(const generic_pipeline&) = delete;
 
-        pipeline_delegate& operator=(pipeline_delegate&& other) noexcept {
+        generic_pipeline& operator=(generic_pipeline&& other) noexcept {
             if (this == &other) {
                 return *this;
             }
@@ -73,8 +73,8 @@ namespace emit::detail {
         }
 
         template <typename T>
-        [[nodiscard]] static pipeline_delegate create() {
-            pipeline_delegate delegate;
+        [[nodiscard]] static generic_pipeline create() {
+            generic_pipeline delegate;
 
             ::new (&delegate.memory_) pipeline<T>();
 
