@@ -8,6 +8,8 @@ namespace emit {
 
     template <typename T, typename... Args>
     class delegate<T(Args...)> {
+        using instance_type = void*;
+        using function_type = T (*)(instance_type, Args...);
 
     public:
         delegate() = default;
@@ -48,16 +50,16 @@ namespace emit {
         }
 
     private:
-        void* instance_ = nullptr;
-        T (*function_)(void*, Args...) = nullptr;
+        instance_type instance_ = nullptr;
+        function_type function_ = nullptr;
 
         template <auto Fn, typename U>
-        static T member_invoke(void* instance, Args... args) {
+        static T member_invoke(instance_type instance, Args... args) {
             return (reinterpret_cast<U*>(instance)->*Fn)(args...);
         }
 
         template <auto Fn>
-        static T free_invoke(void*, Args... args) {
+        static T free_invoke(instance_type, Args... args) {
             return Fn(args...);
         }
     };
