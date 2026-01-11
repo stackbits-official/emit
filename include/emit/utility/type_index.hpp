@@ -4,7 +4,7 @@
 
 #include <cstdlib>
 
-namespace emit::detail {
+namespace emit::internal {
     [[nodiscard]] inline std::size_t increment() {
         static std::size_t n = 0;
 

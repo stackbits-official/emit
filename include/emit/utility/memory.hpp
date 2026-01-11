@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <cstdlib>
 
-namespace emit::detail {
+namespace emit::internal {
     template <std::size_t S, std::size_t A>
     class memory {
     private:

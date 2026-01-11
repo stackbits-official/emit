@@ -2,13 +2,11 @@
 
 #ifdef EMIT_SUPPORTED
 
-#include "../resources/pipeline.hpp"
-
-#include "memory.hpp"
-
+#include "../utility/memory.hpp"
+#include "pipeline.hpp"
 #include <new>
 
-namespace emit::detail {
+namespace emit::internal {
     class generic_pipeline {
         using false_pipeline = pipeline<void*>;
 
